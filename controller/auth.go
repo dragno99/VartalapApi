@@ -68,7 +68,10 @@ func UserLogIn(w http.ResponseWriter, r *http.Request) {
 	}
 	filter := bson.M{"username": inputData.Username}
 	if err := userCollection.FindOne(context.TODO(), filter).Decode(&foundUser); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusAccepted)
+		json.NewEncoder(w).Encode(bson.M{
+			"message": "No user Found",
+		})
 		return
 	}
 	if err := bcrypt.CompareHashAndPassword([]byte(foundUser.Password), []byte(inputData.Password)); err != nil {
