@@ -16,6 +16,17 @@ import (
 var userCollection = database.UserCollection
 
 func UserSignUp(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+
+	if r.Body == nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(bson.M{
+			"message": "Please provide a data",
+		})
+		return
+	}
+
 	var user model.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
@@ -52,6 +63,17 @@ func UserSignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func UserLogIn(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+
+	if r.Body == nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(bson.M{
+			"message": "Please provide a data",
+		})
+		return
+	}
+
 	var inputData, foundUser model.User
 	err := json.NewDecoder(r.Body).Decode(&inputData)
 	if err != nil {
@@ -85,9 +107,13 @@ func UserLogIn(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(bson.M{
 		"message": "User login Successfully",
 	})
+
 }
 
 func SayHello(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "application/json")
+
 	w.WriteHeader(http.StatusAccepted)
 	json.NewEncoder(w).Encode(bson.M{
 		"message": "hello from Vartalap chat api",

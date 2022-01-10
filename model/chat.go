@@ -8,10 +8,12 @@ type Chat struct {
 	Id       primitive.ObjectID `bson:"_id,omitempty"`
 	User1    primitive.ObjectID `bson:"user1,omitempty"`
 	User2    primitive.ObjectID `bson:"user2,omitempty"`
-	Messages []struct {
-		Text      string             `bson:"text,omitempty"`
-		Image     string             `bson:"image,omitempty"`
-		SenderId  primitive.ObjectID `bson:"senderId,omitempty"`
-		CreatedAt primitive.DateTime `bson:"createdAt,omitempty"`
-	}
+	Messages []Message          `bson:"messages,omitempty"`
+}
+
+type Message struct {
+	Text      string             `bson:"text,omitempty"`
+	Image     string             `bson:"image,omitempty"`
+	SenderId  primitive.ObjectID `bson:"senderId,omitempty"`
+	CreatedAt primitive.DateTime `bson:"createdAt,omitempty"`
 }
