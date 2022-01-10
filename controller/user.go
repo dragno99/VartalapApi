@@ -26,10 +26,9 @@ func GetUserChats(w http.ResponseWriter, r *http.Request) {
 		"_id": userId,
 	}).Decode(&user)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest) // bad
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-
 	type tempData struct {
 		Fullname string             `json:"fullname"`
 		Username string             `json:"username"`
