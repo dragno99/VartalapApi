@@ -16,8 +16,8 @@ import (
 
 var chatCollection = database.ChatCollection
 
-// function for getting users chat
-func GetUsersChat(w http.ResponseWriter, r *http.Request) {
+// function for getting user chats
+func GetUserChats(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	userId, _ := primitive.ObjectIDFromHex(params["userId"])
@@ -26,14 +26,14 @@ func GetUsersChat(w http.ResponseWriter, r *http.Request) {
 		"_id": userId,
 	}).Decode(&user)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
+		w.WriteHeader(http.StatusBadRequest) // bad
 		return
 	}
 
 	type tempData struct {
 		Fullname string             `json:"fullname"`
 		Username string             `json:"username"`
-		Id       primitive.ObjectID `json:"_id"`
+		ID       primitive.ObjectID `jbson:"_id"`
 		Imageurl string             `json:"imageurl"`
 		Chatid   primitive.ObjectID `json:"chatid"`
 		Pubkey   string             `json:"pubkey"`
@@ -41,7 +41,7 @@ func GetUsersChat(w http.ResponseWriter, r *http.Request) {
 
 	var userChats []tempData
 	for i := 0; i < len(user.Chatsid); i++ {
-		anotherUserId, err := utils.GetAnotherUser(user.Chatsid[i], params["userID"])
+		anotherUserId, err := utils.GetAnotherUser(user.Chatsid[i], params["userId"])
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -52,13 +52,13 @@ func GetUsersChat(w http.ResponseWriter, r *http.Request) {
 		}).Decode(&chattedUser)
 
 		if err != nil {
-			w.WriteHeader(http.StatusBadRequest)
+			w.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 
 		userChats = append(userChats, tempData{
 			Username: chattedUser.Username,
-			Id:       chattedUser.ID,
+			ID:       chattedUser.ID,
 			Fullname: chattedUser.Fullname,
 			Chatid:   user.Chatsid[i],
 			Imageurl: chattedUser.Imageurl,

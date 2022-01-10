@@ -11,6 +11,7 @@ func InitRouter() *mux.Router {
 	router.HandleFunc("/hello", controller.SayHello).Methods("GET")
 	router.HandleFunc("/login", controller.UserLogIn).Methods("POST")
 	router.HandleFunc("/signup", controller.UserSignUp).Methods("POST")
+	router.HandleFunc("/userchats/{userId}", controller.GetUserChats).Methods("GET")
 	router.HandleFunc("/appusers/{userId}", controller.GetAppUser).Methods("GET")
 	router.HandleFunc("/chatmessages/{chatId}", controller.GetChatMessages).Methods("GET")
 	router.HandleFunc("/startchat/{userId}", controller.StartChat).Methods("POST")

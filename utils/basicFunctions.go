@@ -2,6 +2,7 @@ package utils
 
 import (
 	"context"
+	"log"
 	"vartalap/database"
 	"vartalap/model"
 
@@ -17,22 +18,26 @@ func GetChatedUsers(userID string) []primitive.ObjectID {
 	}).Decode(&user)
 	var chatedUsers []primitive.ObjectID
 	for i := 0; i < len(user.Chatsid); i++ {
-		temp, _ := GetAnotherUser(user.Chatsid[i], userID)
+		temp, err := GetAnotherUser(user.Chatsid[i], userID)
+		if err != nil {
+			log.Fatal(err)
+			return chatedUsers
+		}
 		chatedUsers = append(chatedUsers, temp)
 	}
 	return chatedUsers
 
 }
 
-func GetAnotherUser(user1 primitive.ObjectID, user2 string) (primitive.ObjectID, error) {
+func GetAnotherUser(chatId primitive.ObjectID, user string) (primitive.ObjectID, error) {
 	var chat model.Chat
 	err := database.ChatCollection.FindOne(context.TODO(), bson.M{
-		"_id": user1,
+		"_id": chatId,
 	}).Decode(&chat)
 	if err != nil {
-		return user1, err
+		return chatId, err
 	}
-	if chat.User1.String() == user2 {
+	if chat.User1.Hex() == user {
 		return chat.User2, nil
 	} else {
 		return chat.User1, nil
