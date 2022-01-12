@@ -31,7 +31,7 @@ func GetUserChats(w http.ResponseWriter, r *http.Request) {
 	type tempData struct {
 		Fullname string             `json:"fullname"`
 		Username string             `json:"username"`
-		ID       primitive.ObjectID `jbson:"_id"`
+		ID       primitive.ObjectID `json:"_id"`
 		Imageurl string             `json:"imageurl"`
 		Chatid   primitive.ObjectID `json:"chatid"`
 		Pubkey   string             `json:"pubkey"`

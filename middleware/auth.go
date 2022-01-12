@@ -20,7 +20,7 @@ func GenerateJWT(userId primitive.ObjectID) (string, error) {
 
 	claims["authorized"] = true
 	claims["userId"] = userId
-	claims["exp"] = time.Now().Add(time.Minute * 30).Unix()
+	claims["exp"] = time.Now().Add(time.Hour * 60).Unix()
 
 	tokenString, err := token.SignedString(mySigningKey)
 
@@ -35,16 +35,13 @@ func IsAuthorized(endpoint func(http.ResponseWriter, *http.Request)) http.Handle
 		if r.Header["Token"] != nil {
 			token, err := jwt.Parse(r.Header["Token"][0], func(token *jwt.Token) (interface{}, error) {
 				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-					json.NewEncoder(w).Encode(bson.M{
-						"message": "Not authorized",
-					})
 					return nil, fmt.Errorf("There was an error")
 				}
 				return mySigningKey, nil
 			})
 			if err != nil {
 				json.NewEncoder(w).Encode(bson.M{
-					"message": "Something went wrong",
+					"message": err.Error(),
 				})
 				return
 			}
