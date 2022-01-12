@@ -200,7 +200,7 @@ func StartChat(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusAccepted)
 	json.NewEncoder(w).Encode(bson.M{
-		"message": "Started chatsuccessfully",
+		"message": "Started chat successfully",
 	})
 }
 
@@ -263,7 +263,6 @@ func AddMessage(w http.ResponseWriter, r *http.Request) {
 }
 
 // function to update user's fullname
-
 func UpdateFullName(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	// params := mux.Vars(r)

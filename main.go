@@ -8,14 +8,6 @@ import (
 
 func main() {
 
-	// fmt.Println("My simple token")
-
-	// tokenString, err := middleware.GenerateJWT()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// fmt.Println(tokenString)
-
 	// start the router
 	myRouter := router.InitRouter()
 
