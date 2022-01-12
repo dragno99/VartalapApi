@@ -19,8 +19,7 @@ var chatCollection = database.ChatCollection
 // function for getting user chats
 func GetUserChats(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	userId, _ := primitive.ObjectIDFromHex(params["userId"])
+	userId, _ := primitive.ObjectIDFromHex(r.Header.Get("userId"))
 	var user model.User
 	err := userCollection.FindOne(context.TODO(), bson.M{
 		"_id": userId,
@@ -40,7 +39,7 @@ func GetUserChats(w http.ResponseWriter, r *http.Request) {
 
 	var userChats []tempData
 	for i := 0; i < len(user.Chatsid); i++ {
-		anotherUserId, err := utils.GetAnotherUser(user.Chatsid[i], params["userId"])
+		anotherUserId, err := utils.GetAnotherUser(user.Chatsid[i], r.Header.Get("userId"))
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
@@ -109,9 +108,8 @@ func GetChatMessages(w http.ResponseWriter, r *http.Request) {
 func GetAppUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	params := mux.Vars(r)
-	chatedUsers := utils.GetChatedUsers(params["userId"])
-	userId, _ := primitive.ObjectIDFromHex(params["userId"])
+	chatedUsers := utils.GetChatedUsers(r.Header.Get("userId"))
+	userId, _ := primitive.ObjectIDFromHex(r.Header.Get("userId"))
 	chatedUsers = append(chatedUsers, userId)
 	filter := bson.M{
 		"_id": bson.M{
@@ -153,8 +151,8 @@ func GetAppUser(w http.ResponseWriter, r *http.Request) {
 // function to start chat with a particular user
 func StartChat(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	userId, err := primitive.ObjectIDFromHex(params["userId"])
+	// params := mux.Vars(r)
+	userId, err := primitive.ObjectIDFromHex(r.Header.Get("userId"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -209,8 +207,8 @@ func StartChat(w http.ResponseWriter, r *http.Request) {
 // function to add chat message in a particular chatId
 func AddMessage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	userId, err := primitive.ObjectIDFromHex(params["userId"])
+	// params := mux.Vars(r)
+	userId, err := primitive.ObjectIDFromHex(r.Header.Get("userId"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -239,31 +237,37 @@ func AddMessage(w http.ResponseWriter, r *http.Request) {
 		SenderId:  userId,
 		CreatedAt: msg.CreatedAt,
 	}
-	filter := bson.M{
-		"_id": msg.ChatId,
-	}
+
 	update := bson.M{
 		"$push": bson.M{
 			"messages": currMessage,
 		},
 	}
-	_, err = chatCollection.UpdateOne(context.TODO(), filter, update)
+	result, err := chatCollection.UpdateByID(context.TODO(), msg.ChatId, update)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
-	w.WriteHeader(http.StatusAccepted)
-	json.NewEncoder(w).Encode(bson.M{
-		"Message": "message added successfully.",
-	})
+	if result.MatchedCount > 0 {
+		w.WriteHeader(http.StatusAccepted)
+		json.NewEncoder(w).Encode(bson.M{
+			"Message": "message added successfully.",
+		})
+	} else {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(bson.M{
+			"Message": "message sending failed",
+		})
+	}
+
 }
 
 // function to update user's fullname
 
 func UpdateFullName(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	params := mux.Vars(r)
-	userId, err := primitive.ObjectIDFromHex(params["userId"])
+	// params := mux.Vars(r)
+	userId, err := primitive.ObjectIDFromHex(r.Header.Get("userId"))
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(bson.M{

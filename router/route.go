@@ -2,6 +2,7 @@ package router
 
 import (
 	"vartalap/controller"
+	"vartalap/middleware"
 
 	"github.com/gorilla/mux"
 )
@@ -11,12 +12,12 @@ func InitRouter() *mux.Router {
 	router.HandleFunc("/hello", controller.SayHello).Methods("GET")
 	router.HandleFunc("/login", controller.UserLogIn).Methods("POST")
 	router.HandleFunc("/signup", controller.UserSignUp).Methods("POST")
-	router.HandleFunc("/userchats/{userId}", controller.GetUserChats).Methods("GET")
-	router.HandleFunc("/appusers/{userId}", controller.GetAppUser).Methods("GET")
-	router.HandleFunc("/chatmessages/{chatId}", controller.GetChatMessages).Methods("GET")
-	router.HandleFunc("/startchat/{userId}", controller.StartChat).Methods("POST")
-	router.HandleFunc("/message/{userId}", controller.AddMessage).Methods("POST")
-	router.HandleFunc("/updatefullname/{userId}", controller.UpdateFullName).Methods("POST")
+	router.Handle("/userchats/", middleware.IsAuthorized(controller.GetUserChats)).Methods("GET")
+	router.Handle("/appusers/", middleware.IsAuthorized(controller.GetAppUser)).Methods("GET")
+	router.Handle("/chatmessages/{chatId}", middleware.IsAuthorized(controller.GetChatMessages)).Methods("GET")
+	router.Handle("/startchat/", middleware.IsAuthorized(controller.StartChat)).Methods("POST")
+	router.Handle("/message/", middleware.IsAuthorized(controller.AddMessage)).Methods("POST")
+	router.Handle("/updatefullname/", middleware.IsAuthorized(controller.UpdateFullName)).Methods("POST")
 
 	return router
 }

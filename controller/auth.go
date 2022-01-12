@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strings"
 	"vartalap/database"
+	"vartalap/middleware"
 	"vartalap/model"
 
 	"go.mongodb.org/mongo-driver/bson"
@@ -96,6 +97,7 @@ func UserLogIn(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
 	if err := bcrypt.CompareHashAndPassword([]byte(foundUser.Password), []byte(inputData.Password)); err != nil {
 		w.WriteHeader(http.StatusAccepted)
 		json.NewEncoder(w).Encode(bson.M{
@@ -103,11 +105,40 @@ func UserLogIn(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-	w.WriteHeader(http.StatusAccepted)
-	json.NewEncoder(w).Encode(bson.M{
-		"message": "User login Successfully",
+
+	// update pubkey
+	_, err = userCollection.UpdateByID(context.TODO(), foundUser.ID, bson.M{
+		"$set": bson.M{
+			"pubkey": inputData.Pubkey,
+		},
 	})
 
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(bson.M{
+			"message": "User login failed",
+		})
+	}
+
+	//user login successfully
+	// create JWT
+	tokenString, err := middleware.GenerateJWT(foundUser.ID)
+
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(bson.M{
+			"message": "User login failed",
+		})
+	}
+
+	w.WriteHeader(http.StatusAccepted)
+	json.NewEncoder(w).Encode(bson.M{
+		"message":  "User login Successfully",
+		"token":    tokenString,
+		"userId":   foundUser.ID,
+		"fullname": foundUser.Fullname,
+		"imageurl": foundUser.Imageurl,
+	})
 }
 
 func SayHello(w http.ResponseWriter, r *http.Request) {
