@@ -15,7 +15,7 @@ func main() {
 
 	// godotenv.Load()
 
-	PORT := string(os.Getenv("PORT"))
+	PORT := ":" + string(os.Getenv("PORT"))
 
 	if PORT == "" {
 		PORT = ":8080"
