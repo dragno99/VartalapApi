@@ -36,12 +36,6 @@ func getConnectionString() string {
 	godotenv.Load()
 	username := os.Getenv("USERNAME_mongo")
 	password := os.Getenv("PASSWORD_mongo")
-	if username == "" {
-		username = "suryansh"
-	}
-	if password == "" {
-		password = "suru123"
-	}
 	connectionString := "mongodb+srv://" + username + ":" + password + "@cluster0.lw6zntr.mongodb.net/?retryWrites=true&w=majority"
 	return connectionString
 }

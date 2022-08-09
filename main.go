@@ -13,15 +13,9 @@ func main() {
 	// start the router
 	myRouter := router.InitRouter()
 
-	// godotenv.Load()
+	PORT := ":" + os.Getenv("PORT")
 
-	PORT := ":" + string(os.Getenv("PORT"))
-
-	if PORT == "" {
-		PORT = ":8080"
-	}
 	// start listening
 	log.Fatal(http.ListenAndServe(PORT, myRouter))
-	// log.Fatal(http.ListenAndServe(PORT, handlers.CORS(handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}), handlers.AllowedMethods([]string{"GET", "POST", "PUT", "HEAD", "OPTIONS"}), handlers.AllowedOrigins([]string{"*"}))(myRouter)))
 
 }
