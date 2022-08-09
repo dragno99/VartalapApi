@@ -53,7 +53,7 @@ func UserSignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user.Password = string(hashedPassword)
-	_, err = userCollection.InsertOne(context.TODO(), user)
+	_, err = userCollection.InsertOne(context.Background(), user)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -91,7 +91,7 @@ func UserLogIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	filter := bson.M{"username": inputData.Username}
-	if err := userCollection.FindOne(context.TODO(), filter).Decode(&foundUser); err != nil {
+	if err := userCollection.FindOne(context.Background(), filter).Decode(&foundUser); err != nil {
 		w.WriteHeader(http.StatusAccepted)
 		json.NewEncoder(w).Encode(bson.M{
 			"message": "No user Found",
@@ -108,7 +108,7 @@ func UserLogIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// update pubkey
-	_, err = userCollection.UpdateByID(context.TODO(), foundUser.ID, bson.M{
+	_, err = userCollection.UpdateByID(context.Background(), foundUser.ID, bson.M{
 		"$set": bson.M{
 			"pubkey": inputData.Pubkey,
 		},
