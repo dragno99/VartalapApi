@@ -4,8 +4,8 @@ import (
 	"context"
 	"log"
 
-	"github.com/dragno99/vartalapAPI/database"
-	"github.com/dragno99/vartalapAPI/model"
+	"github.com/dragno99/VartalapApi/database"
+	"github.com/dragno99/VartalapApi/model"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"

@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/dragno99/vartalapAPI/database"
-	"github.com/dragno99/vartalapAPI/middleware"
-	"github.com/dragno99/vartalapAPI/model"
+	"github.com/dragno99/VartalapApi/database"
+	"github.com/dragno99/VartalapApi/middleware"
+	"github.com/dragno99/VartalapApi/model"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"golang.org/x/crypto/bcrypt"

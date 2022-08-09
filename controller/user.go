@@ -6,9 +6,9 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/dragno99/vartalapAPI/database"
-	"github.com/dragno99/vartalapAPI/model"
-	"github.com/dragno99/vartalapAPI/utils"
+	"github.com/dragno99/VartalapApi/database"
+	"github.com/dragno99/VartalapApi/model"
+	"github.com/dragno99/VartalapApi/utils"
 
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"

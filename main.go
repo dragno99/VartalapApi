@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/dragno99/vartalapAPI/router"
+	"github.com/dragno99/VartalapApi/router"
 	"github.com/joho/godotenv"
 )
 
