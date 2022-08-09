@@ -9,8 +9,7 @@ import (
 
 func InitRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
-	// router.Use(mux.CORSMethodMiddleware(router))
-	router.HandleFunc("/hello", controller.SayHello).Methods("GET")
+	router.HandleFunc("/", controller.SayHello).Methods("GET")
 	router.HandleFunc("/login", controller.UserLogIn).Methods("POST")
 	router.HandleFunc("/signup", controller.UserSignUp).Methods("POST")
 	router.Handle("/userchats/", middleware.IsAuthorized(controller.GetUserChats)).Methods("GET")
