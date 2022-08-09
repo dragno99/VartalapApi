@@ -14,7 +14,8 @@ func main() {
 	// start the router
 	myRouter := router.InitRouter()
 
-	godotenv.Load()
+	godotenv.Load(".env")
+
 	PORT := string(os.Getenv("PORT"))
 
 	// start listening
