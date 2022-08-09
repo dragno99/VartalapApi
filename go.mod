@@ -1,6 +1,6 @@
 module github.com/dragno99/VartalapApi
 
-// +heroku goVersion go1.19
+// +heroku goVersion go1.12
 
 go 1.12
 
