@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -57,8 +56,6 @@ func UserSignUp(w http.ResponseWriter, r *http.Request) {
 	_, err = userCollection.InsertOne(context.TODO(), user)
 
 	if err != nil {
-
-		fmt.Println("yaha", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
