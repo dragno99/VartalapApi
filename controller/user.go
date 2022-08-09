@@ -5,9 +5,10 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
-	"vartalap/database"
-	"vartalap/model"
-	"vartalap/utils"
+
+	"github.com/dragno99/vartalapAPI/database"
+	"github.com/dragno99/vartalapAPI/model"
+	"github.com/dragno99/vartalapAPI/utils"
 
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"

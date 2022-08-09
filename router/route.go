@@ -1,8 +1,8 @@
 package router
 
 import (
-	"vartalap/controller"
-	"vartalap/middleware"
+	"github.com/dragno99/vartalapAPI/controller"
+	"github.com/dragno99/vartalapAPI/middleware"
 
 	"github.com/gorilla/mux"
 )

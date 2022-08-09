@@ -4,11 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
-	"vartalap/database"
-	"vartalap/middleware"
-	"vartalap/model"
+
+	"github.com/dragno99/vartalapAPI/database"
+	"github.com/dragno99/vartalapAPI/middleware"
+	"github.com/dragno99/vartalapAPI/model"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"golang.org/x/crypto/bcrypt"
@@ -55,6 +57,8 @@ func UserSignUp(w http.ResponseWriter, r *http.Request) {
 	_, err = userCollection.InsertOne(context.TODO(), user)
 
 	if err != nil {
+
+		fmt.Println("yaha", err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

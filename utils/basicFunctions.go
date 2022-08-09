@@ -3,8 +3,9 @@ package utils
 import (
 	"context"
 	"log"
-	"vartalap/database"
-	"vartalap/model"
+
+	"github.com/dragno99/vartalapAPI/database"
+	"github.com/dragno99/vartalapAPI/model"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
