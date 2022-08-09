@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/dragno99/VartalapApi/router"
-	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -14,7 +13,7 @@ func main() {
 	// start the router
 	myRouter := router.InitRouter()
 
-	godotenv.Load()
+	// godotenv.Load()
 
 	PORT := string(os.Getenv("PORT"))
 
