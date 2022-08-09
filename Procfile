@@ -1,1 +1,1 @@
-web: vartalap-api
+web: go run main.go
