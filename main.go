@@ -14,7 +14,7 @@ func main() {
 	// start the router
 	myRouter := router.InitRouter()
 
-	godotenv.Load(".env")
+	godotenv.Load()
 
 	PORT := string(os.Getenv("PORT"))
 
