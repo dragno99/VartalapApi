@@ -1,1 +1,1 @@
-web: github.com/dragno99/VartalapApi
+web: vartalap-api
