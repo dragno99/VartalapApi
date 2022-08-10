@@ -146,6 +146,7 @@ func SayHello(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	w.WriteHeader(http.StatusAccepted)
+	_ = alreadyExists("sur")
 	json.NewEncoder(w).Encode(bson.M{
 		"message": "hello from Vartalap chat api",
 	})
