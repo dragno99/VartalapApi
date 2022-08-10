@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -207,8 +208,10 @@ func formatAndValidateForLogIn(user model.User) (model.User, error) {
 
 func alreadyExists(username string) bool {
 	var tempUser model.User
+	fmt.Println("yahan pe aaya")
 	_ = userCollection.FindOne(context.Background(), bson.M{
 		"username": username,
 	}).Decode(&tempUser)
+	fmt.Println("yahan se nikal gya")
 	return len(tempUser.Username) > 0
 }
