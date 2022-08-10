@@ -169,12 +169,6 @@ func formatAndValidateForSignUp(user model.User) (model.User, error) {
 	} else {
 		user.Email = strings.TrimSpace(user.Email)
 	}
-
-	if len(user.Pubkey) == 0 {
-		return user, errors.New("please provide a pubkey")
-	} else {
-		user.Pubkey = strings.TrimSpace(user.Pubkey)
-	}
 	if len(user.Imagename) > 0 {
 		user.Imagename = strings.TrimSpace(user.Imagename)
 	}
