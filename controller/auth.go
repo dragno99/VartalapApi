@@ -16,8 +16,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-var userCollection = database.UserCollection
-
 func UserSignUp(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
@@ -54,7 +52,7 @@ func UserSignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user.Password = string(hashedPassword)
-	_, err = userCollection.InsertOne(context.Background(), user)
+	_, err = database.UserCollection.InsertOne(context.Background(), user)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -92,7 +90,7 @@ func UserLogIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	filter := bson.M{"username": inputData.Username}
-	if err := userCollection.FindOne(context.Background(), filter).Decode(&foundUser); err != nil {
+	if err := database.UserCollection.FindOne(context.Background(), filter).Decode(&foundUser); err != nil {
 		w.WriteHeader(http.StatusAccepted)
 		json.NewEncoder(w).Encode(bson.M{
 			"message": "No user Found",
@@ -109,7 +107,7 @@ func UserLogIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// update pubkey
-	_, err = userCollection.UpdateByID(context.Background(), foundUser.ID, bson.M{
+	_, err = database.UserCollection.UpdateByID(context.Background(), foundUser.ID, bson.M{
 		"$set": bson.M{
 			"pubkey": inputData.Pubkey,
 		},
@@ -209,7 +207,7 @@ func formatAndValidateForLogIn(user model.User) (model.User, error) {
 func alreadyExists(username string) bool {
 	var tempUser model.User
 	fmt.Println("yahan pe aaya")
-	_ = userCollection.FindOne(context.Background(), bson.M{
+	_ = database.UserCollection.FindOne(context.Background(), bson.M{
 		"username": username,
 	}).Decode(&tempUser)
 	fmt.Println("yahan se nikal gya")

@@ -15,14 +15,12 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var chatCollection = database.ChatCollection
-
 // function for getting user chats
 func GetUserChats(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	userId, _ := primitive.ObjectIDFromHex(r.Header.Get("userId"))
 	var user model.User
-	err := userCollection.FindOne(context.TODO(), bson.M{
+	err := database.UserCollection.FindOne(context.TODO(), bson.M{
 		"_id": userId,
 	}).Decode(&user)
 	if err != nil {
@@ -46,7 +44,7 @@ func GetUserChats(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		var chattedUser model.User
-		err = userCollection.FindOne(context.TODO(), bson.M{
+		err = database.UserCollection.FindOne(context.TODO(), bson.M{
 			"_id": anotherUserId,
 		}).Decode(&chattedUser)
 
@@ -92,7 +90,7 @@ func GetChatMessages(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-	if err := chatCollection.FindOne(context.TODO(), bson.M{"_id": id}).Decode(&chat); err != nil {
+	if err := database.ChatCollection.FindOne(context.TODO(), bson.M{"_id": id}).Decode(&chat); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(bson.M{
 			"message": "chatId is not valid",
@@ -117,7 +115,7 @@ func GetAppUser(w http.ResponseWriter, r *http.Request) {
 			"$nin": chatedUsers,
 		},
 	}
-	cursor, err := userCollection.Find(context.TODO(), filter)
+	cursor, err := database.UserCollection.Find(context.TODO(), filter)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -176,7 +174,7 @@ func StartChat(w http.ResponseWriter, r *http.Request) {
 	var chat model.Chat
 	chat.User1 = userId
 	chat.User2 = user2id
-	insertedChat, err := chatCollection.InsertOne(context.TODO(), chat)
+	insertedChat, err := database.ChatCollection.InsertOne(context.TODO(), chat)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -190,7 +188,7 @@ func StartChat(w http.ResponseWriter, r *http.Request) {
 				"chatsid": chatId,
 			},
 		}
-		_, err = userCollection.UpdateOne(context.TODO(), filter, update)
+		_, err = database.UserCollection.UpdateOne(context.TODO(), filter, update)
 		return err == nil
 	}
 	bool1 := pushChatIntoUserChatArray(userId, insertedChat.InsertedID.(primitive.ObjectID))
@@ -244,7 +242,7 @@ func AddMessage(w http.ResponseWriter, r *http.Request) {
 			"messages": currMessage,
 		},
 	}
-	result, err := chatCollection.UpdateByID(context.TODO(), msg.ChatId, update)
+	result, err := database.ChatCollection.UpdateByID(context.TODO(), msg.ChatId, update)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -289,7 +287,7 @@ func UpdateFullName(w http.ResponseWriter, r *http.Request) {
 			"fullname": temp.UpdatedFullname,
 		},
 	}
-	_, err = userCollection.UpdateOne(context.TODO(), filter, update)
+	_, err = database.UserCollection.UpdateOne(context.TODO(), filter, update)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
