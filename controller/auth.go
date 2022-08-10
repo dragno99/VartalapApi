@@ -33,6 +33,7 @@ func UserSignUp(w http.ResponseWriter, r *http.Request) {
 	var user model.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
+		fmt.Println("yahan pe")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
