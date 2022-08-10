@@ -36,7 +36,7 @@ func GetUserChats(w http.ResponseWriter, r *http.Request) {
 		Pubkey   string             `json:"pubkey"`
 	}
 
-	var userChats []tempData
+	var userChats = make([]tempData, 0)
 	for i := 0; i < len(user.Chatsid); i++ {
 		anotherUserId, err := utils.GetAnotherUser(user.Chatsid[i], r.Header.Get("userId"))
 		if err != nil {
