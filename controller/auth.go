@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -53,6 +54,7 @@ func UserSignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user.Password = string(hashedPassword)
+	fmt.Println(user)
 	_, err = userCollection.InsertOne(context.Background(), user)
 
 	if err != nil {
