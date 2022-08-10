@@ -250,12 +250,12 @@ func AddMessage(w http.ResponseWriter, r *http.Request) {
 	if result.MatchedCount > 0 {
 		w.WriteHeader(http.StatusAccepted)
 		json.NewEncoder(w).Encode(bson.M{
-			"Message": "message added successfully.",
+			"message": "message added successfully.",
 		})
 	} else {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(bson.M{
-			"Message": "message sending failed",
+			"message": "message sending failed",
 		})
 	}
 
