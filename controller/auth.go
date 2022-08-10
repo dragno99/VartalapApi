@@ -52,7 +52,7 @@ func UserSignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user.Password = string(hashedPassword)
-	_, err = database.UserCollection.InsertOne(context.Background(), user)
+	_, err = database.UserCollection.InsertOne(context.TODO(), user)
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -90,7 +90,7 @@ func UserLogIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	filter := bson.M{"username": inputData.Username}
-	if err := database.UserCollection.FindOne(context.Background(), filter).Decode(&foundUser); err != nil {
+	if err := database.UserCollection.FindOne(context.TODO(), filter).Decode(&foundUser); err != nil {
 		w.WriteHeader(http.StatusAccepted)
 		json.NewEncoder(w).Encode(bson.M{
 			"message": "No user Found",
@@ -107,7 +107,7 @@ func UserLogIn(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// update pubkey
-	_, err = database.UserCollection.UpdateByID(context.Background(), foundUser.ID, bson.M{
+	_, err = database.UserCollection.UpdateByID(context.TODO(), foundUser.ID, bson.M{
 		"$set": bson.M{
 			"pubkey": inputData.Pubkey,
 		},
@@ -207,7 +207,7 @@ func formatAndValidateForLogIn(user model.User) (model.User, error) {
 func alreadyExists(username string) bool {
 	var tempUser model.User
 	fmt.Println("yahan pe aaya")
-	_ = database.UserCollection.FindOne(context.Background(), bson.M{
+	_ = database.UserCollection.FindOne(context.TODO(), bson.M{
 		"username": username,
 	}).Decode(&tempUser)
 	fmt.Println("yahan se nikal gya")
