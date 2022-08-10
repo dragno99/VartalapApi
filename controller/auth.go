@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"strings"
 
@@ -57,7 +56,6 @@ func UserSignUp(w http.ResponseWriter, r *http.Request) {
 	_, err = userCollection.InsertOne(context.Background(), user)
 
 	if err != nil {
-		fmt.Print("yahan pe")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -209,7 +207,7 @@ func formatAndValidateForLogIn(user model.User) (model.User, error) {
 
 func alreadyExists(username string) bool {
 	var tempUser model.User
-	_ = userCollection.FindOne(context.TODO(), bson.M{
+	_ = userCollection.FindOne(context.Background(), bson.M{
 		"username": username,
 	}).Decode(&tempUser)
 	return len(tempUser.Username) > 0
