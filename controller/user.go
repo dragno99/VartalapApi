@@ -121,18 +121,20 @@ func GetAppUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	resUser := make([]interface{}, 0)
+	type userData struct {
+		Fullname string             `json:"fullname"`
+		Username string             `json:"username"`
+		Id       primitive.ObjectID `json:"_id"`
+		Imageurl string             `json:"imageurl"`
+	}
+
+	var resUser = make([]userData, 0)
+
 	for cursor.Next(context.TODO()) {
 		var user model.User
 		if err := cursor.Decode(&user); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			return
-		}
-		type userData struct {
-			Fullname string             `json:"fullname"`
-			Username string             `json:"username"`
-			Id       primitive.ObjectID `json:"_id"`
-			Imageurl string             `json:"imageurl"`
 		}
 		resUser = append(resUser, userData{
 			Fullname: user.Fullname,
