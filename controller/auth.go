@@ -33,7 +33,6 @@ func UserSignUp(w http.ResponseWriter, r *http.Request) {
 	var user model.User
 	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
-		fmt.Println("yahan pe")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
@@ -55,10 +54,10 @@ func UserSignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	user.Password = string(hashedPassword)
-	fmt.Println(user)
 	_, err = userCollection.InsertOne(context.Background(), user)
 
 	if err != nil {
+		fmt.Print("yahan pe")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
