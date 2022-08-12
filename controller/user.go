@@ -3,6 +3,7 @@ package controller
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -99,8 +100,9 @@ func GetChatMessages(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusAccepted)
 	chatMessages, _ := json.Marshal(chat.Messages)
+	fmt.Println(chatMessages)
 	json.NewEncoder(w).Encode(bson.M{
-		"messages": chatMessages,
+		"messages": chat.Messages,
 	})
 }
 
