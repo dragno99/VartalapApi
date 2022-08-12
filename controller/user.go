@@ -206,6 +206,7 @@ func StartChat(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
+
 	w.WriteHeader(http.StatusAccepted)
 	json.NewEncoder(w).Encode(bson.M{
 		"message": "Started chat successfully",
