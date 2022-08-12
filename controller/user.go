@@ -91,6 +91,7 @@ func GetChatMessages(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
+
 	if err := database.ChatCollection.FindOne(context.TODO(), bson.M{"_id": id}).Decode(&chat); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(bson.M{
@@ -99,8 +100,11 @@ func GetChatMessages(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusAccepted)
-	chatMessages, _ := json.Marshal(chat.Messages)
-	fmt.Println(chatMessages)
+
+	if chat.Messages == nil {
+		chat.Messages = make([]model.Message, 0)
+	}
+
 	json.NewEncoder(w).Encode(bson.M{
 		"messages": chat.Messages,
 	})
@@ -249,6 +253,7 @@ func AddMessage(w http.ResponseWriter, r *http.Request) {
 	}
 	result, err := database.ChatCollection.UpdateByID(context.TODO(), msg.ChatId, update)
 	if err != nil {
+		fmt.Println(err.Error())
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
