@@ -15,5 +15,5 @@ type Message struct {
 	Text      string             `bson:"text,omitempty"`
 	Image     string             `bson:"image,omitempty"`
 	SenderId  primitive.ObjectID `bson:"senderId,omitempty"`
-	CreatedAt primitive.DateTime `bson:"createdAt,omitempty"`
+	CreatedAt int64              `bson:"createdAt,omitempty"`
 }

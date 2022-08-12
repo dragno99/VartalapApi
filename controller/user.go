@@ -225,7 +225,7 @@ func AddMessage(w http.ResponseWriter, r *http.Request) {
 	type MsgBody struct {
 		Text      string             `json:"text,omitempty"`
 		Image     string             `json:"image,omitempty"`
-		CreatedAt primitive.DateTime `json:"createdAt,omitempty"`
+		CreatedAt int64              `json:"createdAt,omitempty"`
 		ChatId    primitive.ObjectID `json:"chatId,omitempty"`
 	}
 
