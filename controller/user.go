@@ -98,13 +98,7 @@ func GetChatMessages(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusAccepted)
-	if chat.Messages == nil {
-		chat.Messages = make([]model.Message, 0)
-	}
 	chatMessages, _ := json.Marshal(chat.Messages)
-	if chatMessages == nil {
-		chatMessages = make([]byte, 0)
-	}
 	json.NewEncoder(w).Encode(bson.M{
 		"messages": chatMessages,
 	})
