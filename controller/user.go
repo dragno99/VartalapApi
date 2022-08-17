@@ -10,10 +10,15 @@ import (
 	"github.com/dragno99/VartalapApi/database"
 	"github.com/dragno99/VartalapApi/model"
 	"github.com/dragno99/VartalapApi/utils"
+	"github.com/dragno99/VartalapApi/wSocket"
 
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+var (
+	manyRooms map[string]*wSocket.Room
 )
 
 // function for getting user chats
@@ -108,6 +113,28 @@ func GetChatMessages(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(bson.M{
 		"messages": chat.Messages,
 	})
+}
+
+// function for getting messages related to a particular chat id
+func JoinChatRoom(w http.ResponseWriter, r *http.Request) {
+
+	chatId, userId := mux.Vars(r)["chatId"], mux.Vars(r)["userId"]
+
+	_, ok := manyRooms[chatId]
+
+	if !ok {
+		manyRooms[chatId] = &wSocket.Room{
+			ChatId:     chatId,
+			Users:      make(map[*wSocket.User]bool),
+			Broadcast:  make(chan wSocket.Message),
+			Register:   make(chan *wSocket.User),
+			Unregister: make(chan *wSocket.User),
+		}
+		go manyRooms[chatId].Run()
+	}
+
+	wSocket.ServeWS(manyRooms[chatId], userId, w, r)
+
 }
 
 // function for seeing the list of others users in the database
