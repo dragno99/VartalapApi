@@ -67,6 +67,7 @@ func (u *User) readPump() {
 			u.Room.Unregister <- u
 			break
 		}
+		msg.SenderId, _ = primitive.ObjectIDFromHex(u.UserId)
 		u.Room.Broadcast <- msg
 	}
 }
