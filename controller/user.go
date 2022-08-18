@@ -18,7 +18,7 @@ import (
 )
 
 var (
-	manyRooms map[string]*wSocket.Room
+	manyRooms = make(map[string]*wSocket.Room)
 )
 
 // function for getting user chats
