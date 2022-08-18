@@ -51,7 +51,7 @@ func (r *Room) Run() {
 			{
 				for otherUser := range r.Users {
 					// user should not send message to himself
-					if otherUser.UserId == msg.SenderId.Hex() {
+					if otherUser.UserId == msg.SenderId.String() {
 						continue
 					}
 					select {
