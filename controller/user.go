@@ -118,7 +118,7 @@ func GetChatMessages(w http.ResponseWriter, r *http.Request) {
 // function for getting messages related to a particular chat id
 func JoinChatRoom(w http.ResponseWriter, r *http.Request) {
 
-	chatId, userId := mux.Vars(r)["chatId"], mux.Vars(r)["userId"]
+	chatId, userId := mux.Vars(r)["chatId"], r.Header.Get("userId")
 
 	_, ok := manyRooms[chatId]
 
