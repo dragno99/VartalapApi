@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/dragno99/VartalapApi/database"
 	"github.com/dragno99/VartalapApi/model"
@@ -29,6 +30,20 @@ type User struct {
 	Send chan Message
 }
 
+const (
+	// Time allowed to write a message to the peer.
+	writeWait = 10 * time.Second
+
+	// Time allowed to read the next pong message from the peer.
+	pongWait = 60 * time.Second
+
+	// Send pings to peer with this period. Must be less than pongWait.
+	pingPeriod = (pongWait * 9) / 10
+
+	// Maximum message size allowed from peer.
+	maxMessageSize = 1024
+)
+
 var upgrader = websocket.Upgrader{
 	CheckOrigin: func(r *http.Request) bool {
 		return true
@@ -37,6 +52,10 @@ var upgrader = websocket.Upgrader{
 
 // readPump : pumps message from the websocket connection to the room
 func (u *User) readPump() {
+
+	u.Conn.SetReadLimit(maxMessageSize)
+	u.Conn.SetReadDeadline(time.Now().Add(pongWait))
+	u.Conn.SetPongHandler(func(string) error { u.Conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 
 	for {
 		var msg Message
@@ -55,35 +74,54 @@ func (u *User) readPump() {
 // writePump : pumps message from the hub to the websocket connetion
 func (u *User) writePump() {
 
+	ticker := time.NewTicker(pingPeriod)
+
+	defer func() {
+		ticker.Stop()
+	}()
+
 	for {
-		msg, ok := <-u.Send
-		if !ok {
-			// the room closed the channel
-			u.Conn.WriteMessage(websocket.CloseMessage, []byte{})
-			u.Room.Unregister <- u
-			break
-		}
-		// write message to websocket connection
+		select {
+		case msg, ok := <-u.Send:
+			{
+				u.Conn.SetWriteDeadline(time.Now().Add(writeWait))
 
-		var wg sync.WaitGroup
+				if !ok {
+					// the room closed the channel
+					u.Conn.WriteMessage(websocket.CloseMessage, []byte{})
+					u.Room.Unregister <- u
+					break
+				}
+				// write message to websocket connection
 
-		wg.Add(1)
+				var wg sync.WaitGroup
 
-		go func() {
-			for !pushMessageIntoDatabse(u.Room.ChatId, msg) {
-				break
+				wg.Add(1)
+
+				go func() {
+					for !pushMessageIntoDatabse(u.Room.ChatId, msg) {
+						break
+					}
+					wg.Done()
+				}()
+
+				// wait for pushing message into database
+				wg.Wait()
+				err := u.Conn.WriteJSON(msg)
+
+				if err != nil && unsafeError(err) {
+					log.Printf("error: %v", err)
+					u.Room.Unregister <- u
+					break
+				}
 			}
-			wg.Done()
-		}()
-
-		// wait for pushing message into database
-		wg.Wait()
-		err := u.Conn.WriteJSON(msg)
-
-		if err != nil && unsafeError(err) {
-			log.Printf("error: %v", err)
-			u.Room.Unregister <- u
-			break
+		case <-ticker.C:
+			{
+				u.Conn.SetWriteDeadline(time.Now().Add(writeWait))
+				if err := u.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+					break
+				}
+			}
 		}
 	}
 }

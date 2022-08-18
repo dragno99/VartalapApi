@@ -22,7 +22,7 @@ func GetChatedUsers(userID string) []primitive.ObjectID {
 		temp, err := GetAnotherUser(user.Chatsid[i], userID)
 		if err != nil {
 			log.Fatal(err)
-			return chatedUsers
+			return []primitive.ObjectID{}
 		}
 		chatedUsers = append(chatedUsers, temp)
 	}
