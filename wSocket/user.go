@@ -6,7 +6,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"sync"
 	"time"
 
 	"github.com/dragno99/VartalapApi/database"
@@ -95,19 +94,13 @@ func (u *User) writePump() {
 				}
 				// write message to websocket connection
 
-				var wg sync.WaitGroup
+				isInserted := pushMessageIntoDatabse(u.Room.ChatId, msg)
+				if !isInserted {
+					log.Println("Message not able to push into database:", u.Room.ChatId)
+					u.Room.Unregister <- u
+					break
+				}
 
-				wg.Add(1)
-
-				go func() {
-					for !pushMessageIntoDatabse(u.Room.ChatId, msg) {
-						break
-					}
-					wg.Done()
-				}()
-
-				// wait for pushing message into database
-				wg.Wait()
 				err := u.Conn.WriteJSON(msg)
 
 				if err != nil && unsafeError(err) {
@@ -120,6 +113,7 @@ func (u *User) writePump() {
 			{
 				u.Conn.SetWriteDeadline(time.Now().Add(writeWait))
 				if err := u.Conn.WriteMessage(websocket.PingMessage, nil); err != nil {
+					u.Room.Unregister <- u
 					break
 				}
 			}
