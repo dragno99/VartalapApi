@@ -67,6 +67,7 @@ func (u *User) readPump() {
 			break
 		}
 		msg.SenderId, _ = primitive.ObjectIDFromHex(u.UserId)
+		_ = pushMessageIntoDatabse(u.Room.ChatId, msg)
 		u.Room.Broadcast <- msg
 	}
 }
@@ -93,13 +94,6 @@ func (u *User) writePump() {
 					break
 				}
 				// write message to websocket connection
-
-				isInserted := pushMessageIntoDatabse(u.Room.ChatId, msg)
-				if !isInserted {
-					log.Println("Message not able to push into database:", u.Room.ChatId)
-					u.Room.Unregister <- u
-					break
-				}
 
 				err := u.Conn.WriteJSON(msg)
 
